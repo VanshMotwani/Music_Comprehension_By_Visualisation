@@ -1,0 +1,237 @@
+[
+    {
+        "country": "United States",
+        "average": 86.82806728620163,
+        "total": 3690627.0
+    },
+    {
+        "country": "United Kingdom",
+        "average": 85.4971590909091,
+        "total": 932945.0
+    },
+    {
+        "country": "Brazil",
+        "average": 36.01718907987866,
+        "total": 35621.0
+    },
+    {
+        "country": "Germany",
+        "average": 47.78608058608059,
+        "total": 65228.0
+    },
+    {
+        "country": "Colombia",
+        "average": 65.63117017604418,
+        "total": 380267.0
+    },
+    {
+        "country": "Puerto Rico",
+        "average": 46.340072512751185,
+        "total": 754092.0
+    },
+    {
+        "country": "Dominican Republic",
+        "average": 20.61111111111111,
+        "total": 10388.0
+    },
+    {
+        "country": "Canada",
+        "average": 90.44663017447827,
+        "total": 622287.0
+    },
+    {
+        "country": "Sweden",
+        "average": 66.98529411764706,
+        "total": 36440.0
+    },
+    {
+        "country": "Spain",
+        "average": 47.73360655737705,
+        "total": 104823.0
+    },
+    {
+        "country": "Australia",
+        "average": 77.56246705324196,
+        "total": 147136.0
+    },
+    {
+        "country": "South Korea",
+        "average": 95.37827476038339,
+        "total": 163352.0
+    },
+    {
+        "country": "Belgium",
+        "average": 43.24285714285714,
+        "total": 3027.0
+    },
+    {
+        "country": "France",
+        "average": 35.51093439363817,
+        "total": 53586.0
+    },
+    {
+        "country": "Panama",
+        "average": 52.72014925373134,
+        "total": 56516.0
+    },
+    {
+        "country": "South Africa",
+        "average": 77.04819277108433,
+        "total": 6395.0
+    },
+    {
+        "country": "Italy",
+        "average": 52.5473411154345,
+        "total": 40514.0
+    },
+    {
+        "country": "Argentina",
+        "average": 42.01656314699793,
+        "total": 20294.0
+    },
+    {
+        "country": "Kosovo",
+        "average": 54.64509394572025,
+        "total": 50125.0
+    },
+    {
+        "country": "New Zealand",
+        "average": 75.88075313807532,
+        "total": 36271.0
+    },
+    {
+        "country": "Venezuela",
+        "average": 120.4776119402985,
+        "total": 16144.0
+    },
+    {
+        "country": "Cuba",
+        "average": 87.79858657243817,
+        "total": 49694.0
+    },
+    {
+        "country": "Norway",
+        "average": 32.44204851752021,
+        "total": 24072.0
+    },
+    {
+        "country": "Netherlands",
+        "average": 43.41777777777778,
+        "total": 9769.0
+    },
+    {
+        "country": "Japan",
+        "average": 65.03125,
+        "total": 2081.0
+    },
+    {
+        "country": "Ukraine",
+        "average": 30.5,
+        "total": 244.0
+    },
+    {
+        "country": "Lebanon",
+        "average": 9.0,
+        "total": 9.0
+    },
+    {
+        "country": "Finland",
+        "average": 21.75,
+        "total": 174.0
+    },
+    {
+        "country": "Turkey",
+        "average": 15.571428571428571,
+        "total": 109.0
+    },
+    {
+        "country": "Mexico",
+        "average": 21.728682170542637,
+        "total": 5606.0
+    },
+    {
+        "country": "Jamaica",
+        "average": 57.453125,
+        "total": 18385.0
+    },
+    {
+        "country": "China",
+        "average": 19.565217391304348,
+        "total": 450.0
+    },
+    {
+        "country": "Barbados",
+        "average": 59.47560975609756,
+        "total": 4877.0
+    },
+    {
+        "country": "Ireland",
+        "average": 38.00877192982456,
+        "total": 4333.0
+    },
+    {
+        "country": "Kazakhstan",
+        "average": 50.0,
+        "total": 50.0
+    },
+    {
+        "country": "Chile",
+        "average": 79.57042253521126,
+        "total": 11299.0
+    },
+    {
+        "country": "Cameroon",
+        "average": 23.757575757575758,
+        "total": 1568.0
+    },
+    {
+        "country": "Swiss",
+        "average": 25.636363636363637,
+        "total": 1410.0
+    },
+    {
+        "country": "Republic of Congo",
+        "average": 32.0,
+        "total": 64.0
+    },
+    {
+        "country": "Nigeria",
+        "average": 50.75714285714286,
+        "total": 3553.0
+    },
+    {
+        "country": "Senegal",
+        "average": 62.0,
+        "total": 62.0
+    },
+    {
+        "country": "Bonaire",
+        "average": 8.0,
+        "total": 8.0
+    },
+    {
+        "country": "Denmark",
+        "average": 60.0,
+        "total": 60.0
+    },
+    {
+        "country": "Russia",
+        "average": 31.433962264150942,
+        "total": 1666.0
+    },
+    {
+        "country": "Morocco",
+        "average": 58.0,
+        "total": 406.0
+    },
+    {
+        "country": "Lithuania",
+        "average": 1.0,
+        "total": 1.0
+    },
+    {
+        "country": "Philippines",
+        "average": 15.0,
+        "total": 15.0
+    }
+]

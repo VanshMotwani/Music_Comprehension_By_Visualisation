@@ -1,0 +1,311 @@
+{
+  "children": [
+    {
+      "length": 33,
+      "key": "Netherlands"
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "length": 24,
+                  "key": "Chile"
+                },
+                {
+                  "children": [
+                    {
+                      "length": 21,
+                      "key": "Colombia"
+                    },
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "Peru"
+                        },
+                        {
+                          "length": 18,
+                          "key": "Ecuador"
+                        }
+                      ],
+                      "length": 7
+                    }
+                  ],
+                  "length": 8
+                }
+              ],
+              "length": 9
+            },
+            {
+              "children": [
+                {
+                  "length": 24,
+                  "key": "Argentina"
+                },
+                {
+                  "children": [
+                    {
+                      "length": 21,
+                      "key": "Spain"
+                    },
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "Mexico"
+                        },
+                        {
+                          "length": 18,
+                          "key": "Costa Rica"
+                        }
+                      ],
+                      "length": 7
+                    }
+                  ],
+                  "length": 8
+                }
+              ],
+              "length": 9
+            }
+          ],
+          "length": 10
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "Poland"
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "length": 12,
+                                  "key": "New Zealand"
+                                },
+                                {
+                                  "length": 12,
+                                  "key": "Australia"
+                                }
+                              ],
+                              "length": 5
+                            },
+                            {
+                              "children": [
+                                {
+                                  "length": 12,
+                                  "key": "Philippines"
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "length": 9,
+                                      "key": "Brazil"
+                                    },
+                                    {
+                                      "length": 9,
+                                      "key": "Turkey"
+                                    }
+                                  ],
+                                  "length": 4
+                                }
+                              ],
+                              "length": 5
+                            }
+                          ],
+                          "length": 6
+                        }
+                      ],
+                      "length": 7
+                    },
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "Taiwan"
+                        },
+                        {
+                          "children": [
+                            {
+                              "length": 15,
+                              "key": "Indonesia"
+                            },
+                            {
+                              "children": [
+                                {
+                                  "length": 12,
+                                  "key": "Singapore"
+                                },
+                                {
+                                  "length": 12,
+                                  "key": "Malaysia"
+                                }
+                              ],
+                              "length": 5
+                            }
+                          ],
+                          "length": 6
+                        }
+                      ],
+                      "length": 7
+                    }
+                  ],
+                  "length": 8
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "Switzerland"
+                        },
+                        {
+                          "children": [
+                            {
+                              "length": 15,
+                              "key": "Germany"
+                            },
+                            {
+                              "length": 15,
+                              "key": "Austria"
+                            }
+                          ],
+                          "length": 6
+                        }
+                      ],
+                      "length": 7
+                    },
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "Denmark"
+                        },
+                        {
+                          "children": [
+                            {
+                              "children": [
+                                {
+                                  "length": 12,
+                                  "key": "USA"
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "length": 9,
+                                      "key": "Canada"
+                                    },
+                                    {
+                                      "length": 9,
+                                      "key": "Global"
+                                    }
+                                  ],
+                                  "length": 4
+                                }
+                              ],
+                              "length": 5
+                            },
+                            {
+                              "children": [
+                                {
+                                  "length": 12,
+                                  "key": "Belgium"
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "children": [
+                                        {
+                                          "length": 6,
+                                          "key": "Portugal"
+                                        },
+                                        {
+                                          "length": 6,
+                                          "key": "UK"
+                                        }
+                                      ],
+                                      "length": 3
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "length": 6,
+                                          "key": "Norway"
+                                        },
+                                        {
+                                          "children": [
+                                            {
+                                              "length": 3,
+                                              "key": "Sweden"
+                                            },
+                                            {
+                                              "length": 3,
+                                              "key": "Ireland"
+                                            }
+                                          ],
+                                          "length": 2
+                                        }
+                                      ],
+                                      "length": 3
+                                    }
+                                  ],
+                                  "length": 4
+                                }
+                              ],
+                              "length": 5
+                            }
+                          ],
+                          "length": 6
+                        }
+                      ],
+                      "length": 7
+                    }
+                  ],
+                  "length": 8
+                }
+              ],
+              "length": 9
+            },
+            {
+              "children": [
+                {
+                  "length": 24,
+                  "key": "France"
+                },
+                {
+                  "children": [
+                    {
+                      "length": 21,
+                      "key": "Italy"
+                    },
+                    {
+                      "length": 21,
+                      "key": "Finland"
+                    }
+                  ],
+                  "length": 8
+                }
+              ],
+              "length": 9
+            }
+          ],
+          "length": 10
+        }
+      ],
+      "length": 11
+    }
+  ],
+  "length": 12,
+  "totalLength": 12
+}

@@ -1,0 +1,164 @@
+
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Interactive Doughnut Charts</title>
+      <script src="https://d3js.org/d3.v6.min.js"></script>
+      <style>
+        body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
+          svg {
+              display: inline-block; /* Display charts side by side */
+              vertical-align: top;
+          }
+          .chart-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        h2{
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center
+        }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            width: 120px;
+            height: auto;
+            padding: 10px;
+            font: 15px helvetica;
+            background: rgb(0, 0, 0);
+            color: white;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+        }
+      </style>
+  </head>
+  <body>
+      <!-- <div>
+          <button id="toggleButton">Change to 2021</button>
+      </div> -->
+      
+      <div>
+        <button id="toggleButton">Change to 2021</button>
+    </div>
+    <div id="tooltip" class="tooltip"></div>
+      <div style="display:inline-block ;padding-left: 50px;">
+      <div id="chart1" style="width: 500px; height: 500px; display: inline-block;"><h2>Total Share of Streams</h2></div>
+      <div id="chart2" style="width: 500px; height: 500px; display: inline-block;"><h2>Total Share of Top Charrts</h2></div>
+    </div>
+    
+      
+      <script>
+          const width = 500, height = 500, radius = Math.min(width, height) / 2.3 - 10;
+  
+          // Define pie layout and arc functions
+          const pie = d3.pie().value(d => d.value).sort(null);
+          const arc = d3.arc().innerRadius(radius * 0.5).outerRadius(radius * 0.9);
+          const outerArc = d3.arc().innerRadius(radius * 1.1).outerRadius(radius * 1.1);
+  
+          function drawChart(container, data, color) {
+                container.selectAll("*").remove(); // Clear previous drawings
+                const tooltip = d3.select("#tooltip");
+
+                const slices = container.selectAll("path")
+                    .data(pie(data))
+                    .enter()
+                    .append("path")
+                    .attr("d", arc)
+                    .attr("fill", (d, i) => color(i))
+                    .on("mouseover", function(event, d) {
+                        tooltip.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                        tooltip.html(d.data.label + "<br/>" + 
+                                    "Share: " + ((d.data.value / d3.sum(data, d => d.value)) * 100).toFixed(2) + "%" + "<br/>" + 
+                                    "Total: " + d.data.value)
+                            .style("left", (event.pageX) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                    })
+                    .on("mouseout", function(d) {
+                        tooltip.transition()
+                            .duration(500)
+                            .style("opacity", 0);
+                    });
+              // Add labels
+              const text = container.selectAll("text")
+                .data(pie(data))
+                .enter()
+                .append("text")
+                .attr("transform", d => {
+                    const pos = outerArc.centroid(d);
+                    // Randomize the Y position within a range of -10 to +10 units
+                    const randomYOffset = Math.random() * 20 - 10; // creates a random number between -10 and 10
+                    pos[1] += randomYOffset; // adjust the Y position by the random offset
+                    pos[0] = radius * 0.99 * (midAngle(d) < Math.PI ? 1 : -1);
+                    return `translate(${pos})`;
+                })
+                .style("text-anchor", d => midAngle(d) < Math.PI ? "start" : "end")
+                .text(d => d.data.label);
+
+                
+              // Add polylines
+              const polyline = container.selectAll("polyline")
+                  .data(pie(data))
+                  .enter()
+                  .append("polyline")
+                  .attr("points", d => {
+                      const pos = outerArc.centroid(d);
+                      pos[0] = radius * 0.85 * (midAngle(d) < Math.PI ? 1 : -1);
+                      return [arc.centroid(d), outerArc.centroid(d), pos];
+                  })
+                  .style("fill", "none")
+                  .style("stroke", "black")
+                  .style("stroke-width", 1);
+            
+              function midAngle(d) { // Utility to calculate mid angle of a slice
+                  return d.startAngle + (d.endAngle - d.startAngle) / 2;
+              }
+          }
+  
+          function loadData(year) {
+              const fileName = `Genre_Details_Top25_${year}.csv`;
+              d3.csv(fileName, d3.autoType).then(data => {
+                  const streamData = data.map(d => ({ label: d.Genre, value: d.Streams }));
+                  const chartedData = data.map(d => ({ label: d.Genre, value: d['Number of Times Charted'] }));
+                  drawChart(d3.select("#chart1 g"), streamData, d3.scaleOrdinal(d3.schemeCategory10));
+                  drawChart(d3.select("#chart2 g"), chartedData, d3.scaleOrdinal(d3.schemeCategory10));
+              });
+          }
+          
+          document.getElementById("toggleButton").addEventListener("click", function() {
+              currentYear = currentYear === 2020 ? 2021 : 2020;
+              loadData(currentYear);
+              this.textContent = currentYear === 2020 ? "Change to 2021" : "Change to 2020";
+          });
+  
+          // Initial setup: Create containers for the pie charts
+          const svg1 = d3.select("#chart1").append("svg")
+              .attr("width", width)
+              .attr("height", height)
+              .append("g")
+              .attr("transform", `translate(${width / 2}, ${height / 2})`);
+  
+          const svg2 = d3.select("#chart2").append("svg")
+              .attr("width", width)
+              .attr("height", height)
+              .append("g")
+              .attr("transform", `translate(${width / 2}, ${height / 2})`);
+  
+          let currentYear = 2020;
+          loadData(currentYear); // Initial data load
+      </script>
+  </body>
+  </html>
+  

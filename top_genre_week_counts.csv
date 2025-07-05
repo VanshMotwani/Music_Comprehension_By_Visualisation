@@ -1,0 +1,531 @@
+Genre,Weeks Charted,Count
+dance pop,1,79
+dance pop,2,85
+dance pop,3,71
+dance pop,4,72
+dance pop,5,75
+dance pop,6,75
+dance pop,7,75
+dance pop,8,75
+dance pop,9,72
+dance pop,10,76
+dance pop,11,71
+dance pop,12,72
+dance pop,13,84
+dance pop,14,80
+dance pop,15,79
+dance pop,16,80
+dance pop,17,77
+dance pop,18,77
+dance pop,19,80
+dance pop,20,74
+dance pop,21,81
+dance pop,22,88
+dance pop,23,83
+dance pop,24,81
+dance pop,25,83
+dance pop,26,76
+dance pop,27,65
+dance pop,28,65
+dance pop,29,67
+dance pop,30,27
+dance pop,31,29
+dance pop,32,34
+dance pop,33,36
+dance pop,34,32
+dance pop,35,34
+dance pop,36,33
+dance pop,37,31
+dance pop,38,31
+dance pop,39,28
+dance pop,40,24
+dance pop,41,27
+dance pop,42,27
+dance pop,43,30
+dance pop,44,41
+dance pop,45,37
+dance pop,46,34
+dance pop,47,32
+dance pop,48,30
+dance pop,49,33
+dance pop,50,27
+dance pop,51,40
+dance pop,52,78
+dance pop,53,34
+latin,1,49
+latin,2,49
+latin,3,49
+latin,4,50
+latin,5,49
+latin,6,51
+latin,7,47
+latin,8,48
+latin,9,62
+latin,10,56
+latin,11,52
+latin,12,51
+latin,13,39
+latin,14,40
+latin,15,43
+latin,16,41
+latin,17,39
+latin,18,36
+latin,19,46
+latin,20,44
+latin,21,45
+latin,22,46
+latin,23,43
+latin,24,43
+latin,25,42
+latin,26,42
+latin,27,49
+latin,28,41
+latin,29,40
+latin,30,18
+latin,31,19
+latin,32,17
+latin,33,17
+latin,34,21
+latin,35,23
+latin,36,24
+latin,37,25
+latin,38,23
+latin,39,23
+latin,40,23
+latin,41,25
+latin,42,24
+latin,43,22
+latin,44,24
+latin,45,25
+latin,46,23
+latin,47,20
+latin,48,36
+latin,49,27
+latin,50,23
+latin,51,20
+latin,52,47
+latin,53,24
+melodic rap,1,33
+melodic rap,2,35
+melodic rap,3,27
+melodic rap,4,29
+melodic rap,5,28
+melodic rap,6,28
+melodic rap,7,28
+melodic rap,8,30
+melodic rap,9,29
+melodic rap,10,47
+melodic rap,11,49
+melodic rap,12,37
+melodic rap,13,36
+melodic rap,14,35
+melodic rap,15,38
+melodic rap,16,37
+melodic rap,17,36
+melodic rap,18,35
+melodic rap,19,34
+melodic rap,20,30
+melodic rap,21,34
+melodic rap,22,31
+melodic rap,23,32
+melodic rap,24,31
+melodic rap,25,28
+melodic rap,26,30
+melodic rap,27,31
+melodic rap,28,45
+melodic rap,29,43
+melodic rap,30,24
+melodic rap,31,20
+melodic rap,32,22
+melodic rap,33,22
+melodic rap,34,20
+melodic rap,35,19
+melodic rap,36,18
+melodic rap,37,18
+melodic rap,38,19
+melodic rap,39,16
+melodic rap,40,14
+melodic rap,41,14
+melodic rap,42,14
+melodic rap,43,13
+melodic rap,44,13
+melodic rap,45,13
+melodic rap,46,13
+melodic rap,47,13
+melodic rap,48,10
+melodic rap,49,11
+melodic rap,50,10
+melodic rap,51,10
+melodic rap,52,32
+melodic rap,53,11
+pop,1,159
+pop,2,165
+pop,3,146
+pop,4,158
+pop,5,167
+pop,6,165
+pop,7,173
+pop,8,158
+pop,9,148
+pop,10,146
+pop,11,154
+pop,12,167
+pop,13,176
+pop,14,176
+pop,15,159
+pop,16,162
+pop,17,152
+pop,18,148
+pop,19,150
+pop,20,150
+pop,21,157
+pop,22,162
+pop,23,158
+pop,24,154
+pop,25,157
+pop,26,155
+pop,27,141
+pop,28,134
+pop,29,142
+pop,30,78
+pop,31,83
+pop,32,83
+pop,33,82
+pop,34,76
+pop,35,75
+pop,36,73
+pop,37,69
+pop,38,71
+pop,39,66
+pop,40,64
+pop,41,69
+pop,42,71
+pop,43,74
+pop,44,75
+pop,45,73
+pop,46,72
+pop,47,66
+pop,48,57
+pop,49,60
+pop,50,66
+pop,51,64
+pop,52,144
+pop,53,72
+pop rap,1,41
+pop rap,2,42
+pop rap,3,37
+pop rap,4,41
+pop rap,5,44
+pop rap,6,41
+pop rap,7,41
+pop rap,8,38
+pop rap,9,39
+pop rap,10,39
+pop rap,11,35
+pop rap,12,36
+pop rap,13,36
+pop rap,14,38
+pop rap,15,40
+pop rap,16,39
+pop rap,17,44
+pop rap,18,53
+pop rap,19,41
+pop rap,20,39
+pop rap,21,34
+pop rap,22,36
+pop rap,23,40
+pop rap,24,35
+pop rap,25,32
+pop rap,26,35
+pop rap,27,33
+pop rap,28,32
+pop rap,29,34
+pop rap,30,19
+pop rap,31,20
+pop rap,32,21
+pop rap,33,23
+pop rap,34,23
+pop rap,35,24
+pop rap,36,27
+pop rap,37,24
+pop rap,38,23
+pop rap,39,25
+pop rap,40,20
+pop rap,41,19
+pop rap,42,18
+pop rap,43,21
+pop rap,44,18
+pop rap,45,18
+pop rap,46,22
+pop rap,47,15
+pop rap,48,15
+pop rap,49,15
+pop rap,50,26
+pop rap,51,13
+pop rap,52,42
+pop rap,53,20
+post-teen pop,1,71
+post-teen pop,2,81
+post-teen pop,3,70
+post-teen pop,4,69
+post-teen pop,5,71
+post-teen pop,6,70
+post-teen pop,7,85
+post-teen pop,8,71
+post-teen pop,9,65
+post-teen pop,10,65
+post-teen pop,11,73
+post-teen pop,12,73
+post-teen pop,13,73
+post-teen pop,14,81
+post-teen pop,15,64
+post-teen pop,16,63
+post-teen pop,17,59
+post-teen pop,18,54
+post-teen pop,19,56
+post-teen pop,20,50
+post-teen pop,21,54
+post-teen pop,22,59
+post-teen pop,23,53
+post-teen pop,24,50
+post-teen pop,25,48
+post-teen pop,26,46
+post-teen pop,27,36
+post-teen pop,28,35
+post-teen pop,29,39
+post-teen pop,30,37
+post-teen pop,31,37
+post-teen pop,32,33
+post-teen pop,33,31
+post-teen pop,34,28
+post-teen pop,35,27
+post-teen pop,36,25
+post-teen pop,37,25
+post-teen pop,38,25
+post-teen pop,39,24
+post-teen pop,40,24
+post-teen pop,41,24
+post-teen pop,42,27
+post-teen pop,43,30
+post-teen pop,44,40
+post-teen pop,45,36
+post-teen pop,46,33
+post-teen pop,47,32
+post-teen pop,48,31
+post-teen pop,49,33
+post-teen pop,50,44
+post-teen pop,51,40
+post-teen pop,52,67
+post-teen pop,53,32
+rap,1,59
+rap,2,61
+rap,3,81
+rap,4,62
+rap,5,59
+rap,6,60
+rap,7,55
+rap,8,54
+rap,9,59
+rap,10,72
+rap,11,69
+rap,12,55
+rap,13,53
+rap,14,58
+rap,15,62
+rap,16,65
+rap,17,67
+rap,18,77
+rap,19,73
+rap,20,66
+rap,21,63
+rap,22,60
+rap,23,58
+rap,24,61
+rap,25,66
+rap,26,57
+rap,27,52
+rap,28,49
+rap,29,50
+rap,30,29
+rap,31,27
+rap,32,29
+rap,33,31
+rap,34,30
+rap,35,31
+rap,36,31
+rap,37,30
+rap,38,30
+rap,39,28
+rap,40,38
+rap,41,28
+rap,42,27
+rap,43,27
+rap,44,26
+rap,45,24
+rap,46,26
+rap,47,21
+rap,48,19
+rap,49,20
+rap,50,31
+rap,51,19
+rap,52,60
+rap,53,22
+reggaeton,1,51
+reggaeton,2,51
+reggaeton,3,51
+reggaeton,4,52
+reggaeton,5,50
+reggaeton,6,53
+reggaeton,7,49
+reggaeton,8,50
+reggaeton,9,64
+reggaeton,10,58
+reggaeton,11,54
+reggaeton,12,53
+reggaeton,13,41
+reggaeton,14,42
+reggaeton,15,45
+reggaeton,16,43
+reggaeton,17,42
+reggaeton,18,40
+reggaeton,19,50
+reggaeton,20,47
+reggaeton,21,48
+reggaeton,22,49
+reggaeton,23,46
+reggaeton,24,46
+reggaeton,25,44
+reggaeton,26,44
+reggaeton,27,52
+reggaeton,28,44
+reggaeton,29,43
+reggaeton,30,18
+reggaeton,31,19
+reggaeton,32,17
+reggaeton,33,17
+reggaeton,34,22
+reggaeton,35,24
+reggaeton,36,25
+reggaeton,37,26
+reggaeton,38,24
+reggaeton,39,24
+reggaeton,40,24
+reggaeton,41,26
+reggaeton,42,25
+reggaeton,43,23
+reggaeton,44,25
+reggaeton,45,26
+reggaeton,46,24
+reggaeton,47,21
+reggaeton,48,38
+reggaeton,49,29
+reggaeton,50,25
+reggaeton,51,22
+reggaeton,52,48
+reggaeton,53,26
+trap,1,28
+trap,2,28
+trap,3,22
+trap,4,23
+trap,5,26
+trap,6,25
+trap,7,24
+trap,8,24
+trap,9,30
+trap,10,42
+trap,11,44
+trap,12,30
+trap,13,29
+trap,14,29
+trap,15,34
+trap,16,31
+trap,17,34
+trap,18,31
+trap,19,29
+trap,20,30
+trap,21,28
+trap,22,29
+trap,23,30
+trap,24,26
+trap,25,26
+trap,26,25
+trap,27,22
+trap,28,22
+trap,29,23
+trap,30,16
+trap,31,17
+trap,32,14
+trap,33,15
+trap,34,14
+trap,35,15
+trap,36,15
+trap,37,15
+trap,38,15
+trap,39,14
+trap,40,26
+trap,41,15
+trap,42,14
+trap,43,15
+trap,44,14
+trap,45,13
+trap,46,14
+trap,47,8
+trap,48,7
+trap,49,8
+trap,50,6
+trap,51,6
+trap,52,30
+trap,53,6
+trap latino,1,46
+trap latino,2,45
+trap latino,3,46
+trap latino,4,44
+trap latino,5,44
+trap latino,6,49
+trap latino,7,46
+trap latino,8,48
+trap latino,9,62
+trap latino,10,58
+trap latino,11,53
+trap latino,12,46
+trap latino,13,41
+trap latino,14,40
+trap latino,15,39
+trap latino,16,39
+trap latino,17,40
+trap latino,18,41
+trap latino,19,50
+trap latino,20,46
+trap latino,21,46
+trap latino,22,47
+trap latino,23,46
+trap latino,24,44
+trap latino,25,43
+trap latino,26,46
+trap latino,27,51
+trap latino,28,44
+trap latino,29,44
+trap latino,30,19
+trap latino,31,19
+trap latino,32,18
+trap latino,33,18
+trap latino,34,21
+trap latino,35,22
+trap latino,36,23
+trap latino,37,25
+trap latino,38,23
+trap latino,39,23
+trap latino,40,22
+trap latino,41,24
+trap latino,42,24
+trap latino,43,21
+trap latino,44,23
+trap latino,45,23
+trap latino,46,22
+trap latino,47,18
+trap latino,48,34
+trap latino,49,25
+trap latino,50,22
+trap latino,51,20
+trap latino,52,43
+trap latino,53,24

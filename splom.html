@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<!-- Year slider -->
+<input type="range" id="yearSlider" min="2017" max="2020" value="2017">
+<label for="yearSlider">Year:</label>
+<span id="yearValue"></span>
+
+<!-- Month slider -->
+<input type="range" id="monthSlider" min="1" max="12" value="1">
+<label for="monthSlider">Month:</label>
+<span id="monthValue"></span>
+
+<script>
+
+// Dimension of the whole chart. Only one size since it has to be square
+var marginWhole = {top: 10, right: 10, bottom: 10, left: 10},
+    sizeWhole = 640 - marginWhole.left - marginWhole.right;
+
+// Create the svg area
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", sizeWhole  + marginWhole.left + marginWhole.right + 2000)
+    .attr("height", sizeWhole  + marginWhole.top + marginWhole.bottom)
+  .append("g")
+    .attr("transform", "translate(" + marginWhole.left + "," + marginWhole.top + ")");
+
+// Tooltip
+var tooltip = d3.select("body").append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
+
+d3.csv("FinalDatabase_updated.csv", function(data) {
+  // Filter the data so only rows which have Release_date field starting from 2017-01 are allowed
+  // Year slider
+    var yearSlider = document.getElementById("yearSlider");
+    var yearValue = document.getElementById("yearValue");
+    yearValue.innerHTML = yearSlider.value;
+
+    yearSlider.oninput = function() {
+      yearValue.innerHTML = this.value;
+      updateData(data);
+    };
+
+    // Month slider
+    var monthSlider = document.getElementById("monthSlider");
+    var monthValue = document.getElementById("monthValue");
+    monthValue.innerHTML = monthSlider.value;
+
+    monthSlider.oninput = function() {
+      monthValue.innerHTML = this.value;
+      updateData(data);
+    };
+
+  function updateData(data) {
+    svg.selectAll("*").remove();
+
+    data = data.filter(function(d) {
+      return d.Release_date.startsWith(yearSlider.value + "-" + (Number(monthSlider.value) <= 9 ? "0" + monthSlider.value : monthSlider.value)) && d.Popularity > 10000;
+    });
+    var data = d3.nest()
+      .key(function(d) { return d.Title; })
+      .rollup(function(values) {
+        return {
+          energy: d3.mean(values, function(d) { return +d.energy; }),
+          danceability: d3.mean(values, function(d) { return +d.danceability; }),
+          instrumentalness: d3.mean(values, function(d) { return +d.instrumentalness; }),
+          acoustics: d3.mean(values, function(d) { return +d.acoustics; }),
+          Popularity: d3.mean(values, function(d) { return +d.Popularity; }),
+          Genre: values[0].Genre
+        };
+      })
+      .entries(data)
+      .map(function(d) {
+        return {
+          Title: d.key,
+          energy: d.value.energy,
+          danceability: d.value.danceability,
+          instrumentalness: d.value.instrumentalness,
+          acoustics: d.value.acoustics,
+          Popularity: d.value.Popularity,
+          Genre: d.value.Genre
+        };
+      });
+
+    console.log(data); // Just to check if the data is grouped and averaged correctly
+
+    // var genres = d3.map(data, function(d){return d.Genre;}).keys();
+    // console.log(genres)
+
+    // Group the data by Genre and calculate the average popularity for each genre
+    var genrePopularity = d3.nest()
+      .key(function(d) { return d.Genre; })
+      .rollup(function(values) {
+        return d3.mean(values, function(d) { return +d.Popularity; });
+      })
+      .entries(data);
+
+    // Sort the genrePopularity array based on average popularity
+    genrePopularity.sort(function(a, b) {
+      return a.value - b.value;
+    });
+
+    // Calculate the number of genres
+    var numGenres = genrePopularity.length;
+
+    // Initialize an array to hold the genre groups
+    var genreGroups = [];
+
+    // Loop through each popularity range to create genre groups
+    for (var i = 0; i < 15; i++) {
+      // Define the popularity range for the current group
+      var start = Math.floor((numGenres / 15) * i);
+      var end = Math.floor((numGenres / 15) * (i + 1));
+
+      // Get genres for the current group
+      var genres = genrePopularity.slice(start, end).map(function(d) { return d.key; });
+
+      // Add the list of genres to the genre groups array
+      genreGroups.push(genres);
+    }
+
+    console.log(genreGroups.length); // List of 10 groups of genres based on average popularity
+
+    var colors = [
+    "#1f77b4", // blue
+    "#ff7f0e", // orange
+    "#2ca02c", // green
+    "#d62728", // red
+    "#9467bd", // purple
+    "#8c564b", // brown
+    "#e377c2", // pink
+    "#7f7f7f", // gray
+    "#bcbd22", // yellow-green
+    "#17becf", // cyan
+    "#aec7e8", // light blue
+    "#ffbb78", // light orange
+    "#98df8a", // light green
+    "#ff9896", // light red
+    "#c5b0d5"  // light purple
+  ];
+
+    var allVar = ["Popularity", "energy", "danceability", "instrumentalness", "acoustics"];
+    var numVar = allVar.length;
+
+    mar = 20;
+    size = sizeWhole / numVar;
+
+    // Create a scale: gives the position of each pair each variable
+    var position = d3.scalePoint()
+      .domain(allVar)
+      .range([0, sizeWhole-size]);
+
+    // Color scale: give me a specie name, I return a color
+    var colorScale = d3.scaleOrdinal()
+      .domain(genreGroups.map(function(group, index) { return index; }))
+      .range(colors.slice(0, genreGroups.length));
+
+    // ------------------------------- //
+    // Add charts
+    // ------------------------------- //
+    for (i in allVar){
+      for (j in allVar){
+
+        // Get current variable name
+        var var1 = allVar[i];
+        var var2 = allVar[j];
+
+        // If var1 == var2 i'm on the diagonal, I skip that
+        if (var1 === var2) { continue; }
+
+        // Add X Scale of each graph
+        var xextent = d3.extent(data, function(d) { return +d[var1]; });
+        var x = d3.scaleLinear()
+          .domain(xextent).nice()
+          .range([ 0, size-2*mar ]);
+
+        // Add Y Scale of each graph
+        var yextent = d3.extent(data, function(d) { return +d[var2]; });
+        var y = d3.scaleLinear()
+          .domain(yextent).nice()
+          .range([ size-2*mar, 0 ]);
+
+        // Add a 'g' at the right position
+        var tmp = svg
+          .append('g')
+          .attr("transform", "translate(" + (position(var1)+mar) + "," + (position(var2)+mar) + ")");
+
+        // Add X and Y axis in tmp
+        tmp.append("g")
+          .attr("transform", "translate(" + 0 + "," + (size-mar*2) + ")")
+          .call(d3.axisBottom(x).ticks(3));
+        tmp.append("g")
+          .call(d3.axisLeft(y).ticks(3));
+
+        // Add circle
+        tmp
+          .selectAll("myCircles")
+          .data(data)
+          .enter()
+          .append("circle")
+            .attr("class", function(d) { return var1 + ";" + var2; }) // Add class to circle
+            .attr("cx", function(d){ return x(+d[var1]); })
+            .attr("cy", function(d){ return y(+d[var2]); })
+            .attr("r", 3)
+            .attr("fill", function(d) {
+              var groupIndex = genreGroups.findIndex(function(group) {
+                return group.includes(d.Genre);
+              });
+              return colorScale(groupIndex);
+            })
+            .on('mouseover', function (d) {
+              tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+              var classes = d3.select(this).attr("class").split(";");
+              var part1 = classes[0];
+              var part2 = classes[1];
+              tooltip.html("Song: " + d.Title + "<br/>" + part1 + ": " + d[part1] + "<br/>" + part2 + ": " + d[part2] + "<br/>Genre: " + d.Genre)
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on('mouseout', function () {
+              tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+            });
+      }
+    }
+
+    // Add legend
+    var legend = svg.selectAll(".legend")
+      .data(genreGroups)
+      .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(0," + i * 40 + ")"; });
+
+    legend.append("rect")
+      .attr("x", sizeWhole + 50)
+      .attr("y", 35)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", function(d, i) { return colorScale(i); });
+
+    legend.append("text")
+      .attr("x", sizeWhole + 75)
+      .attr("y", 35 + 8)
+      .attr("dy", ".35em")
+      .attr("font-size", "13px")
+      .style("text-anchor", "start")
+      .text(function(d, i) { return genreGroups[i]; });
+
+
+    for (i in allVar){
+      for (j in allVar){
+        // If var1 == var2 i'm on the diagonal, otherwisee I skip
+        if (i != j) { continue; }
+        // Add text
+        var var1 = allVar[i];
+        var var2 = allVar[j];
+        svg
+          .append('g')
+          .attr("transform", "translate(" + position(var1) + "," + position(var2) + ")")
+          .append('text')
+            .attr("x", size/2)
+            .attr("y", size/2)
+            .text(var1)
+            .attr("text-anchor", "middle")
+      }
+    }
+  }
+
+  updateData(data);
+});
+
+</script>
+
+<style>
+  .tooltip {
+    position: absolute;
+    text-align: center;
+    padding: 4px;
+    font: 12px sans-serif;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border: 0px;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+</style>

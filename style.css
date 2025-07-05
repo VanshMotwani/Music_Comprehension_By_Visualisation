@@ -1,0 +1,86 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #0e0e0e;
+  color: rgb(255, 255, 255);
+}
+
+header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: #00c23e;
+  color: #000000;
+  padding: 10px;
+  font-family: Impact;
+  text-align: center;
+  z-index: 0; /* Ensure the navbar stays above other content */
+}
+
+header h1 {
+  margin: 0;
+}
+
+nav ul {
+  list-style: none;
+  text-emphasis: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+nav ul li:hover{
+  background-color: #aa8b8b;
+}
+nav ul li a {
+  color: #484848;
+  text-decoration: none;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+  padding-top: 40px; /* Adjust padding to make space for the fixed navbar */
+  padding: '10%';
+  padding-left: 10%;
+}
+
+section {
+  padding: 50px 0;
+}
+
+section h2 {
+  text-align: center;
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+}
+
+a button {
+  display: inline-block;
+  padding: 10px 20px; /* Adjust padding as needed */
+  font-size: 16px; /* Adjust font size as needed */
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  color: #000000; /* Text color */
+  background-color: #ffffff; /* Button background color (white) */
+  border: 2px solid #000;
+  border-radius: 5px; /* Adjust border radius as needed */
+  cursor: pointer;
+}
+
+/* Hover effect */
+a button:hover {
+  background-color: #807878; /* Darker shade of black on hover */
+}
+
+

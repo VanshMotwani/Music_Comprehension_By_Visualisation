@@ -1,0 +1,329 @@
+{
+  "children": [
+    {
+      "children": [
+        {
+          "length": 30,
+          "key": "french hip hop"
+        },
+        {
+          "length": 30,
+          "key": "francoton"
+        }
+      ],
+      "length": 11
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "length": 24,
+                  "key": "canadian hip hop"
+                },
+                {
+                  "children": [
+                    {
+                      "length": 21,
+                      "key": "alternative metal"
+                    },
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "adult standards"
+                        },
+                        {
+                          "children": [
+                            {
+                              "length": 15,
+                              "key": "rap"
+                            },
+                            {
+                              "children": [
+                                {
+                                  "length": 12,
+                                  "key": "dfw rap"
+                                },
+                                {
+                                  "length": 12,
+                                  "key": "canadian contemporary r&b"
+                                }
+                              ],
+                              "length": 5
+                            }
+                          ],
+                          "length": 6
+                        }
+                      ],
+                      "length": 7
+                    }
+                  ],
+                  "length": 8
+                }
+              ],
+              "length": 9
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "length": 21,
+                      "key": "k-pop"
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "length": 15,
+                              "key": "atl hip hop"
+                            },
+                            {
+                              "children": [
+                                {
+                                  "length": 12,
+                                  "key": "mandopop"
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "length": 9,
+                                      "key": "art pop"
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "length": 6,
+                                          "key": "big room"
+                                        },
+                                        {
+                                          "children": [
+                                            {
+                                              "length": 3,
+                                              "key": "canadian pop"
+                                            },
+                                            {
+                                              "length": 3,
+                                              "key": "pop"
+                                            }
+                                          ],
+                                          "length": 2
+                                        }
+                                      ],
+                                      "length": 3
+                                    }
+                                  ],
+                                  "length": 4
+                                }
+                              ],
+                              "length": 5
+                            }
+                          ],
+                          "length": 6
+                        },
+                        {
+                          "children": [
+                            {
+                              "length": 15,
+                              "key": "colombian pop"
+                            },
+                            {
+                              "children": [
+                                {
+                                  "children": [
+                                    {
+                                      "length": 9,
+                                      "key": "chicago rap"
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "length": 6,
+                                          "key": "edm"
+                                        },
+                                        {
+                                          "length": 6,
+                                          "key": "emo rap"
+                                        }
+                                      ],
+                                      "length": 3
+                                    }
+                                  ],
+                                  "length": 4
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "length": 9,
+                                      "key": "modern rock"
+                                    },
+                                    {
+                                      "children": [
+                                        {
+                                          "length": 6,
+                                          "key": "electropop"
+                                        },
+                                        {
+                                          "children": [
+                                            {
+                                              "length": 3,
+                                              "key": "detroit hip hop"
+                                            },
+                                            {
+                                              "length": 3,
+                                              "key": "melodic rap"
+                                            }
+                                          ],
+                                          "length": 2
+                                        }
+                                      ],
+                                      "length": 3
+                                    }
+                                  ],
+                                  "length": 4
+                                }
+                              ],
+                              "length": 5
+                            }
+                          ],
+                          "length": 6
+                        }
+                      ],
+                      "length": 7
+                    }
+                  ],
+                  "length": 8
+                },
+                {
+                  "children": [
+                    {
+                      "length": 21,
+                      "key": "german hip hop"
+                    },
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "danish hip hop"
+                        },
+                        {
+                          "length": 18,
+                          "key": "polish hip hop"
+                        }
+                      ],
+                      "length": 7
+                    }
+                  ],
+                  "length": 8
+                }
+              ],
+              "length": 9
+            }
+          ],
+          "length": 10
+        },
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "length": 24,
+                  "key": "hip hop"
+                },
+                {
+                  "length": 24,
+                  "key": "dance pop"
+                }
+              ],
+              "length": 9
+            },
+            {
+              "children": [
+                {
+                  "length": 24,
+                  "key": "dutch hip hop"
+                },
+                {
+                  "children": [
+                    {
+                      "children": [
+                        {
+                          "length": 18,
+                          "key": "deep german hip hop"
+                        },
+                        {
+                          "length": 18,
+                          "key": "n-a"
+                        }
+                      ],
+                      "length": 7
+                    },
+                    {
+                      "children": [
+                        {
+                          "children": [
+                            {
+                              "length": 15,
+                              "key": "latin"
+                            },
+                            {
+                              "children": [
+                                {
+                                  "length": 12,
+                                  "key": "boy band"
+                                },
+                                {
+                                  "children": [
+                                    {
+                                      "length": 9,
+                                      "key": "alternative r&b"
+                                    },
+                                    {
+                                      "length": 9,
+                                      "key": "conscious hip hop"
+                                    }
+                                  ],
+                                  "length": 4
+                                }
+                              ],
+                              "length": 5
+                            }
+                          ],
+                          "length": 6
+                        },
+                        {
+                          "children": [
+                            {
+                              "length": 15,
+                              "key": "italian hip hop"
+                            },
+                            {
+                              "length": 15,
+                              "key": "finnish dance pop"
+                            }
+                          ],
+                          "length": 6
+                        }
+                      ],
+                      "length": 7
+                    }
+                  ],
+                  "length": 8
+                }
+              ],
+              "length": 9
+            }
+          ],
+          "length": 10
+        }
+      ],
+      "length": 11
+    }
+  ],
+  "length": 12,
+  "totalLength": 12
+}

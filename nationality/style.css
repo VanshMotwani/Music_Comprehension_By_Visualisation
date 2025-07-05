@@ -1,0 +1,124 @@
+.tooltip {
+    position: absolute;
+    visibility: hidden;
+    padding: 10px;
+    background-color: rgb(0, 0, 0);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-align: left;
+    font-size: 12px;
+    color: rgb(197, 197, 197);
+    font-family:Arial;
+    
+}
+
+
+select{
+    margin-top: 60px;
+    margin-left: 30px;
+    width: 200px;
+    height: 30px;
+    background-color: lightgray;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    font-size: 16px;
+    font-family:Arial;
+}
+#yearSelector{
+    margin-left: 20%;
+}
+
+/* svg{
+    margin-left: 10%;
+} */
+
+
+  
+
+
+/* template code below */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #c1c1c1;
+  }
+  
+header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: #000000;
+    color: #fff;
+    padding: 10px;
+    font-family: Impact;
+    text-align: center;
+    z-index: 0; /* Ensure the navbar stays above other content */
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    text-emphasis: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li:hover{
+    background-color: #aa8b8b;
+}
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding-top: 40px; /* Adjust padding to make space for the fixed navbar */
+    padding: '10%';
+}
+
+section {
+    padding: 50px 0;
+}
+
+section h2 {
+    text-align: center;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+a button {
+    display: inline-block;
+    padding: 10px 20px; /* Adjust padding as needed */
+    font-size: 16px; /* Adjust font size as needed */
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #000000; /* Text color */
+    background-color: #ffffff; /* Button background color (white) */
+    border: 2px solid #000;
+    border-radius: 5px; /* Adjust border radius as needed */
+    cursor: pointer;
+}
+
+/* Hover effect */
+a button:hover {
+    background-color: #807878; /* Darker shade of black on hover */
+}
+
+

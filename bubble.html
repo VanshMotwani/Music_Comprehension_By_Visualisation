@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bubble Plot</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        .bubble {
+            stroke: black;
+            stroke-width: 1px;
+        }
+        .legend {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bubble Plot for Different songs across time</h1>
+    <script>
+        // Set up dimensions and margins
+        const margin = { top: 20, right: 150, bottom: 50, left: 80 };
+        const width = 960 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
+
+        // Append the SVG object to the body of the page
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Read the data from the CSV file
+        d3.csv("FinalDatabase_updated.csv").then(data => {
+            // Filter the data to include only songs released between 2017 and 2019, and with Country as "Global"
+            const filteredData = data.filter(d => {
+                const releaseYear = parseInt(d.Release_date.slice(0, 4));
+                return releaseYear >= 2017 && releaseYear <= 2019 && d.Country === "Global";
+            });
+
+            // Process the filtered data
+            const quarters = Array.from(new Set(filteredData.map(d => {
+                const year = d.Release_date.slice(0, 4);
+                const month = parseInt(d.Release_date.slice(5, 7));
+                const quarter = month <= 3 ? 1 : month <= 6 ? 2 : month <= 9 ? 3 : 4;
+                return `${year} Q${quarter}`;
+            })))
+            .sort((a, b) => a.localeCompare(b));
+
+            const nestedData = quarters.map(quarter => {
+                const quarterData = filteredData.filter(d => {
+                    const year = d.Release_date.slice(0, 4);
+                    const month = parseInt(d.Release_date.slice(5, 7));
+                    const quarterValue = month <= 3 ? 1 : month <= 6 ? 2 : month <= 9 ? 3 : 4;
+                    return `${year} Q${quarterValue}` === quarter;
+                });
+                return { quarter, data: quarterData.sort((a, b) => parseFloat(b.Popularity) - parseFloat(a.Popularity)).slice(0, 25) };
+            });
+
+            const flattenedData = nestedData.flatMap((d, i) => d.data.map((song, j) => ({ ...song, index: j + 1, quarter: d.quarter })));
+
+            // Set up scales
+            const x = d3.scaleLinear()
+                .range([20, width])
+                .domain([1, 25]);
+
+            const y = d3.scalePoint()
+                .range([height, 0])
+                .padding(1)
+                .domain(quarters);
+
+            const radius = d3.scaleSqrt()
+                .range([4, 17])
+                .domain(d3.extent(flattenedData, d => parseFloat(d.Popularity)));
+
+            const customColors = ["#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4", "#46f0f0", "#f032e6", "#bcf60c", "#fabebe", "#008080", "#e6beff", "#9a6324", "#fffac8", "#800000", "#aaffc3", "#808000", "#ffd8b1", "#000075", "#808080", "#ffffff", "#000000", "#a9a9a9", "#d3d3d3"];
+            const color = d3.scaleOrdinal(customColors)
+                .domain(Array.from(new Set(flattenedData.map(d => d.Genre))));
+
+            // Draw the bubbles
+            svg.selectAll("circle")
+                .data(flattenedData)
+                .join("circle")
+                .attr("cx", d => x(d.index))
+                .attr("cy", d => y(d.quarter))
+                .attr("r", d => radius(parseFloat(d.Popularity)))
+                .attr("fill", d => color(d.Genre))
+                .attr("class", "bubble")
+                .append("title")
+                .text(d => `${d.Title} (${d.Popularity})`);
+
+            // Add x-axis
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(20));
+
+            // Add y-axis
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // Add legend
+            const legend = svg.append("g")
+                .attr("transform", `translate(${width + 40}, 0)`);
+
+            const legendEntries = legend.selectAll(".legend")
+                .data(color.domain())
+                .enter().append("g")
+                .attr("class", "legend")
+                .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+            legendEntries.append("rect")
+                .attr("x", 0)
+                .attr("width", 18)
+                .attr("height", 18)
+                .style("fill", color);
+
+            legendEntries.append("text")
+                .attr("x", 24)
+                .attr("y", 9)
+                .attr("dy", ".35em")
+                .style("text-anchor", "start")
+                .text(d => d);
+        });
+    </script>
+</body>
+</html>

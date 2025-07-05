@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Map Visualization</title>
+  <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-heatmap.min.js"></script>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
+    .tooltip {
+      position: absolute;
+      top: 10px;
+      left: 70%;
+      padding-left: 50px;
+      width: 100px;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px;
+      border-radius: 5px;
+      pointer-events: none; /* Ensure the tooltip does not block mouse events */
+      transition: opacity 0.3s ease-in-out;
+      z-index: 999; /* Ensure it's above other elements */
+    }
+
+    .tooltipPerm {
+      position: absolute;
+      font-size: 10px;
+      padding-left: 50px;
+      width: 100px;
+      top: 50px;
+      left: 70%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 25px;
+      padding-left: 50px;
+      padding-right: 50px;
+      border-radius: 5px;
+      pointer-events: none; /* Ensure the tooltip does not block mouse events */
+      transition: opacity 0.3s ease-in-out;
+      z-index: 999; /* Ensure it's above other elements */
+    }
+
+    #container {
+      height: 200px;
+      width: 40%;
+      padding-top: 2%;
+    }
+
+    #info-container {
+      position: absolute;
+      top: 20%;
+      right: 8%;
+      width: 30%;
+      height: 35%;
+      padding: 20px;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    #info-container h2 {
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    #info-container p {
+      font-size: 20px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    #info-container p::before {
+      content: "•";
+      color: black;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- THIS IS THE CONTAINER FOR THE PERMANENT TOOLTIP SHOWING CURRENTLY SELECTED MONTH AND YEAR -->
+  <div class="tooltipPerm" id="yearMonthTooltip"></div>
+
+  <!-- SLIDERS FOR SELECTING MONTH AND YEAR -->
+  <div>
+    <label for="yearSlider">Year:</label>
+    <input type="range" min="2017" max="2020" value="2017" class="slider" id="yearSlider" disabled>
+  </div>
+  <div>
+    <label for="monthSlider">Month:</label>
+    <input type="range" min="1" max="12" value="1" class="slider" id="monthSlider" disabled>
+  </div>
+
+  <!-- THIS ELEMENT WILL HOUSE THE MAP -->
+  <svg id="my_dataviz" width="1000" height="500"></svg>
+  <div id="info-container">
+    <h2>Welcome!</h2>
+    <p>
+      Hover over the choropleth's countries to see the corresponding heatmap of genres.<br></p>
+    <p>
+      Use left and right arrow keys to navigate between months and years.<br></p>
+    <p>
+      Click on a country to make the heatmap of that month, year of the country permanently visible.<br></p>
+    <p>
+      Double click while on that month and year on the country to make that permanent heatmap disappear.
+    </p>
+  </div>
+  </div>
+  <!-- THIS DIV HOUSES THE TEMPORARY HEATMAP AS A TOOLTIP -->
+  <div class="tooltip" style="opacity: 0;"></div>
+
+  <div id="container"></div>
+
+  <script>
+    var isClicked = {};
+
+    var monthList = [
+    'Filler', 'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    var years = ['2017', '2018', '2019', '2020']
+
+    years.forEach(function (year) {
+      monthList.forEach(function (month) {
+        console.log("isClicked[", month+year , "] = {}]");
+        isClicked[month + year] = {};
+      });
+    });
+
+    console.log(isClicked);
+
+    // SELECT THE FIRST SVG IN THE CODE
+    var svg = d3.select("svg"),
+      width = +svg.attr("width"),
+      height = +svg.attr("height");
+
+    var path = d3.geoPath();
+    var projection = d3.geoMercator()
+      .scale(150)
+      .center([0, 20])
+      .translate([width / 2, height / 2]);
+
+    // Color scale for the choropleth
+    var gradientScale = d3.scaleLinear()
+      .domain([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+      .range(["#b3d9ff", "#80b3ff", "#4d8cff", "#1a66ff", "#0047b3", "#ff9999", "#ff6666", "#ff3333", "#ff0000", "#cc0000", "#990000"]);
+
+    // DATA FROM GEOJSON FILE AND DATA FROM THE DATABSE CSV ARE STORED IN topo and data VARIABLES PASSED TO ready() FUNCTION
+    d3.queue()
+      .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
+      .defer(d3.csv, "FinalDatabase_updated.csv?v=1") // Load CSV data with unique query parameter
+      .await(ready);
+
+    // WHEN DATA IS LOADED, THEN ONLY THIS FUNCTION IS CALLED BY await(ready)
+    function ready(error, topo, data) {
+      var yearSlider = document.getElementById("yearSlider");
+      var monthSlider = document.getElementById("monthSlider");
+      var prevMonthButton = document.getElementById("prevMonth");
+      var nextMonthButton = document.getElementById("nextMonth");
+      var yearOutput = document.getElementById("yearValue");
+      var monthOutput = document.getElementById("monthValue");
+      var tooltipPerm = document.getElementById("yearMonthTooltip");
+
+      // Draw the initial map
+      drawMap(topo, data, yearSlider.value, monthSlider.value);
+
+      // Update year and month values
+      updateYearMonth();
+
+      yearSlider.oninput = function () {
+        yearOutput.innerHTML = this.value;
+        var selectedYear = this.value;
+        if (selectedYear == "2020") {
+          monthSlider.max = "10"; // Limit month slider range
+          if (parseInt(monthSlider.value) > 10) {
+            monthOutput.innerHTML = "10";
+            monthSlider.value = "10";
+          }
+        } else {
+          monthSlider.max = "12"; // Reset month slider range
+        }
+        redrawMap(topo, data, this.value, monthSlider.value); // Redraw map when year changes
+        updateYearMonth();
+      }
+
+      monthSlider.oninput = function () {
+        monthOutput.innerHTML = this.value;
+        redrawMap(topo, data, yearSlider.value, this.value); // Redraw map when month changes
+        updateYearMonth();
+      }
+
+      // Function to update the year and month tooltip
+      function updateYearMonth() {
+        var year = yearSlider.value;
+        var month = monthSlider.value;
+        tooltipPerm.innerHTML = "<strong>" + monthList[parseInt(month)] + "</strong> " + year; // Update tooltip content
+      }
+
+      // THIS CHANGES THE MONTH AND YEAR AS A RESPONSE TO LEFT ARROW AND RIGHT ARROW KEY CLICK, AND THEN REDRAWS THE MAP
+      document.addEventListener("keydown", function(event) {
+        var key = event.key;
+        if (key === "ArrowLeft") {
+          if (parseInt(monthSlider.value) > 1) {
+            monthSlider.value = parseInt(monthSlider.value) - 1;
+          } else {
+            if (parseInt(yearSlider.value) > 2017) {
+              yearSlider.value = parseInt(yearSlider.value) - 1;
+              monthSlider.value = 12;
+            }
+          }
+          redrawMap(topo, data, yearSlider.value, monthSlider.value);
+          updateYearMonth();
+        } else if (key === "ArrowRight") {
+          console.log(monthSlider.value, " ", monthSlider.max);
+          console.log(yearSlider.value);
+          if (parseInt(monthSlider.value) < parseInt(monthSlider.max)) {
+            monthSlider.value = parseInt(monthSlider.value) + 1;
+          } else {
+            if (parseInt(yearSlider.value) < 2020) {
+              yearSlider.value = parseInt(yearSlider.value) + 1;
+              monthSlider.value = 1;
+            }
+          }
+          redrawMap(topo, data, yearSlider.value, monthSlider.value);
+          updateYearMonth();
+        }
+      });
+
+      // FUNCTION TO DRAW THE CHOROPLETH MAP, TAKES THE data VARIABLE CONTAINING DATABASE AS AN ARGUEMENT
+      function drawMap(topo, data, year, month) {
+        // FILTERES DATA TO ONLY RETAIN THE DATA OF THE CURRENTLY SELECTED MONTH AND YEAR
+        var filteredData = data.filter(function (d) {
+          var modifiedMonthString = month.length === 1 ? '0' + month : month;
+          return d.Release_date.includes(year + "-" + modifiedMonthString);
+        });
+
+        // Store all unique values of the 'Country' column in filteredData
+        var uniqueCountries = [...new Set(filteredData.map(d => d.Country))];
+
+        // INITIALISING THE DICT WHICH KEEPS TRACK OF WHETHER A COUNTRY WAS CLICKED OR NOT
+        years.forEach(function (year) {
+          monthList.forEach(function (month) {
+            uniqueCountries.forEach(function (country) {
+              isClicked[month + year][country] = 0;
+            });
+          });
+        });
+
+        // Calculate the explicit percentage and count for each country
+        var countryExplicitData = {};
+        uniqueCountries.forEach(function (country) {
+          var countryTotalData = filteredData.filter(function (d) {
+            return d.Country === country;
+          });
+          var explicitCount = countryTotalData.filter(function (d) {
+            return d.Explicit === 'True';
+          }).length;
+          var totalCount = countryTotalData.length;
+          var percentageExplicit = totalCount > 0 ? (explicitCount * 100 / totalCount) : 0;
+          countryExplicitData[country] = {
+            explicitCount: explicitCount,
+            totalCount: totalCount,
+            percentageExplicit: percentageExplicit
+          };
+        });
+
+      // Draw the map
+      svg.selectAll("path")
+        .data(topo.features)
+        .enter()
+        .append("path")
+        .attr("d", d3.geoPath().projection(projection))
+        .attr("fill", function (d) {
+          var countryName = d.properties.name;
+          var data = countryExplicitData[countryName];
+          if (!data || data.totalCount === 0) {
+            return "grey"; // Set color to grey for countries with no explicit songs
+          } else {
+            var explicitPercentage = data.percentageExplicit;
+            console.log(countryName + ": " + explicitPercentage + "% Explicit");
+            return gradientScale(explicitPercentage); // Use the gradient scale for countries with explicit songs
+          }
+        })
+        .attr("class", "Country")
+        .style("stroke", "transparent")
+        .on("mouseover", function (d) {
+          // ON MOUSEOVER A COUNTRY, SHOW ITS TOOLTIP WITH ITS INFORMATION ALONG WITH A HEATMAP SHOWING GENRE DISTRIBUTION OF THAT COUNTRY IN THAT MONTH AND YEAR
+          var countryName = d.properties.name;
+          var data = countryExplicitData[countryName];
+          var explicitCount = data ? data.explicitCount : 0;
+          var totalCount = data ? data.totalCount : 0;
+          var explicitPercentage = data ? data.percentageExplicit : 0;
+
+           // BASIC TOOLTIP AND HIGHLIGHT EFFECT
+          var tooltip = d3.select(".tooltip");
+          tooltip.transition()
+            .duration(100)
+            .style("opacity", .9);
+          tooltip.html(
+            "<strong>" + countryName + "</strong><br>" +
+            "Explicit Percentage: " + explicitPercentage.toFixed(2) + "%<br>" +
+            explicitCount + " out of " + totalCount + " songs explicit"
+          )
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY - 28) + "px");
+
+          d3.selectAll(".Country")
+            .transition()
+            .duration(100)
+            .style("opacity", .5)
+          d3.select(this)
+            .transition()
+            .duration(100)
+            .style("opacity", 1)
+            .style("stroke", "black")
+
+          // CODE FOR PLOTTING THE HEATMAP TOOLTIP
+          anychart.onDocumentReady(function () {
+              var countryName = d.properties.name;
+              var container = document.getElementById('container');
+              console.log(d.properties.name)
+
+              // LIST OF MOST POPULAR GENRES IN OUR DATA (>1000 rows occupied by these genres in our database)
+              var genres = [
+                'dance pop',
+                'latin',
+                'pop',
+                'k-pop',
+                'n-a',
+                'german hip hop',
+                'atl hip hop',
+                'francoton',
+                'dutch hip hop',
+                'big room',
+                'hip hop',
+                'canadian hip hop',
+                'emo rap',
+                'french hip hop',
+                'finnish dance pop',
+                'melodic rap',
+                'boy band',
+                'italian hip hop',
+                'alternative metal',
+                'canadian pop',
+                'modern rock',
+                'chicago rap',
+                'deep german hip hop',
+                'colombian pop',
+                'conscious hip hop',
+                'adult standards',
+                'detroit hip hop',
+                'alternative r&b',
+                'electropop',
+                'canadian contemporary r&b',
+                'edm',
+                'art pop',
+                'polish hip hop',
+                'dfw rap',
+                'mandopop',
+                'danish hip hop',
+                'rap'
+              ]
+
+              // FILTER THE RAW DATA TO STORE THE COUNTRIES AND THE PERCENTAGE OF EACH PARTICULAR GENRE'S SONGS FROM THAT COUNTRY
+              var heatmapData = [];
+              var country = d.properties.name;
+              var countryData = {};
+              countryData['name'] = country;
+              genres.forEach(function(genre) {
+                var genreSongs = filteredData.filter(function(d) {
+                  return d.Country === country && d.Genre === genre
+                }).length;
+
+                var totalSongs = filteredData.filter(function(d) {
+                  return d.Country === country;
+                }).length;
+
+                var percentage = totalSongs > 0 ? (genreSongs / totalSongs) * 100 : 0;
+                countryData[genre] = percentage;
+                countryData[genre + 'filtered'] = genreSongs;
+                countryData[genre + 'total'] = totalSongs;
+              });
+              heatmapData.push(countryData);
+
+              // CONVERT THE FILTERED DATA INTO A FORMAT SUITABLE FOR PLOTTING HEATMAP
+              var anychartData = [];
+              heatmapData.forEach(function (countryData) {
+                genres.sort(function(a, b) {
+                  return countryData[b] - countryData[a];
+                }).forEach(function (genre) {
+                  var newdic = {};
+                  newdic['x'] = genre;
+                  newdic['y'] = countryData["name"];
+                  newdic['heat'] = countryData[genre];
+                  newdic['filtered'] = countryData[genre + 'filtered'];
+                  newdic['total'] = countryData[genre + 'total'];
+                  anychartData.push(newdic);
+                });
+              });
+
+              container.innerHTML = '';
+
+              // Create AnyChart heatmap
+              var chart = anychart.heatMap(anychartData);
+              chart.title("Heatmap of Genre Distribution by Country");
+              chart.container(container);
+
+              // Define the color scale for the heatmap (100 COLORS GRADIENT)
+              var colorScale = anychart.scales.linearColor();
+              colorScale.colors(["#FFFFCC", "#FFFF99", "#FFFF66", "#FFFF33", "#FFFF00", "#FFCC00", "#FF9900", "#FF6600", "#FF3300", "#FF0000"]); // Black for 0% participation, yellow for others
+
+              chart.colorScale(colorScale);
+              // SET THE TOOLTIP FORMAT OF HEATMAP
+              chart.tooltip().titleFormat(function () {
+                return 'Value: ' + this.getData('heat').toFixed(2) + '%' + ' (' + this.getData('filtered') + '/' + this.getData('total') + ' are Explicit' + ')';
+              });
+              chart.tooltip().format(function () {
+                return 'Country: ' + this.getData('y') + ', Genre: ' + this.getData('x');
+              });
+
+              // Set x-axis labels (genres) and y-axis labels (countries)
+              chart.xAxis().staggerMode(true).staggerLines(2); // Stagger mode to fit more labels
+              chart.xAxis().labels().format(function() {
+                // Split the genre label into words
+                var words = genres[this.index].split(' ');
+                if (words.length > 1){
+                  // REDUCE THE LENGTH OF GENRE NAMES BY ABBREVIATING THE FIRST WORD
+                  var abbreviatedLabel = words[0].charAt(0) + '. ';
+                  abbreviatedLabel += words.slice(1).join(' ');
+                  return abbreviatedLabel;
+                }
+                else{
+                  return genres[this.index];
+                }
+              }).fontWeight('bold').fontColor('black');
+
+              chart.yAxis().labels().format(function() {
+                return country;
+              }).fontWeight('bold').fontColor('black');
+
+              chart.draw();
+          });
+
+        })
+        .on("mouseout", function (d) {
+          // HANDLE REMOVING TOOLTIPS ON STOPPING HOVER
+          d3.select(".tooltip").transition()
+            .duration(100)
+            .style("opacity", 0);
+
+          d3.selectAll(".Country")
+            .transition()
+            .duration(0)
+            .style("opacity", .8)
+          d3.select(this)
+            .transition()
+            .duration(0)
+            .style("stroke", "transparent")
+
+          container.innerHTML = '';
+
+        })
+        .on("click", function (d) {
+          // CREATE A NEW CONTAINER FOR THE NEW PERMANENT TOOLTIP
+            var container = document.getElementById(d.properties.name.toLowerCase().replace(/\s+/g, '-') + monthList[monthSlider.value] + yearSlider.value.toString() + '-container');
+            // Check if the container already exists
+            console.log(monthList[monthSlider.value] + yearSlider.value.toString())
+            console.log(isClicked[monthList[monthSlider.value] + yearSlider.value.toString()])
+            if (isClicked[monthList[monthSlider.value] + yearSlider.value.toString()][d.properties.name]) {
+                // If the container doesn't exist, create it
+                if (container){
+                  container.innerHTML = '';
+                  isClicked[monthList[monthSlider.value] + yearSlider.value.toString()][d.properties.name] = 0;
+                }
+            }
+            else{
+              // HANDLE PERMANENTLY SHOWING TOOLTIP ON CLICKING ON A COUNTRY AND REMOVING ON A DOUBLE CLICK
+              anychart.onDocumentReady(function () {
+                var countryName = d.properties.name;
+
+                var genres = [
+                  'dance pop',
+                  'latin',
+                  'pop',
+                  'k-pop',
+                  'n-a',
+                  'german hip hop',
+                  'atl hip hop',
+                  'francoton',
+                  'dutch hip hop',
+                  'big room',
+                  'hip hop',
+                  'canadian hip hop',
+                  'emo rap',
+                  'french hip hop',
+                  'finnish dance pop',
+                  'melodic rap',
+                  'boy band',
+                  'italian hip hop',
+                  'alternative metal',
+                  'canadian pop',
+                  'modern rock',
+                  'chicago rap',
+                  'deep german hip hop',
+                  'colombian pop',
+                  'conscious hip hop',
+                  'adult standards',
+                  'detroit hip hop',
+                  'alternative r&b',
+                  'electropop',
+                  'canadian contemporary r&b',
+                  'edm',
+                  'art pop',
+                  'polish hip hop',
+                  'dfw rap',
+                  'mandopop',
+                  'danish hip hop',
+                  'rap'
+                ]
+
+                var heatmapData = [];
+                var country = d.properties.name;
+                var countryData = {};
+                countryData['name'] = country;
+
+                // TOGGLE THE VALUE OF isClicked CORRESPONDING TO THE COUNTRY, CURRENT MONTH AND YEAR
+                if (isClicked[monthList[monthSlider.value] + yearSlider.value.toString()][country]){
+                  isClicked[monthList[monthSlider.value] + yearSlider.value.toString()][country] = 0;
+                }
+                else{
+                  isClicked[monthList[monthSlider.value] + yearSlider.value.toString()][country] = 1;
+                }
+
+                var countrysname = d.properties.name;
+                var containerId = countrysname.toLowerCase().replace(/\s+/g, '-') + monthList[monthSlider.value] + yearSlider.value.toString() + '-container'; // Convert country name to lowercase and replace spaces with dashes for ID
+                var container = document.getElementById(containerId);
+
+                // Check if the container already exists
+                if (!container) {
+                    // If the container doesn't exist, create it
+                    container = document.createElement('div');
+                    container.id = containerId;
+                    document.body.appendChild(container);
+                }
+
+// FILTER THE DATA AND SAVE THE PERCENTAGE OF SONGS OF EACH GENRE FOR THAT COUNTRY IN THE SELECTED MONTH AND YEAR
+                genres.forEach(function(genre) {
+                  var genreSongs = filteredData.filter(function(d) {
+                    return d.Country === country && d.Genre === genre
+                  }).length;
+
+                  var totalSongs = filteredData.filter(function(d) {
+                    return d.Country === country;
+                  }).length;
+
+                  var percentage = totalSongs > 0 ? (genreSongs / totalSongs) * 100 : 0;
+                  countryData[genre] = percentage;
+                  countryData[genre + 'filtered'] = genreSongs;
+                  countryData[genre + 'total'] = totalSongs;
+                });
+                heatmapData.push(countryData);
+
+                // MOULD THE FILTERED DATA INTO A FORMAT SUITABLE FOR PLOTTING ANYCHART HEATMAP
+                var anychartData = [];
+                heatmapData.forEach(function (countryData) {
+                  genres.sort(function(a, b) {
+                    return countryData[b] - countryData[a];
+                  }).forEach(function (genre) {
+                    var newdic = {};
+                    newdic['x'] = genre;
+                    newdic['y'] = countryData["name"];
+                    newdic['heat'] = countryData[genre];
+                    newdic['filtered'] = countryData[genre + 'filtered'];
+                    newdic['total'] = countryData[genre + 'total'];
+                    anychartData.push(newdic);
+                  });
+                });
+                container.innerHTML = '';
+
+                // Create AnyChart heatmap
+                var chart = anychart.heatMap(anychartData);
+                chart.title("Heatmap of Genre Distribution of " + monthList[monthSlider.value] + " " + yearSlider.value);
+                chart.container(container);
+
+                // Define the color scale for the heatmap
+                var colorScale = anychart.scales.linearColor();
+                colorScale.colors(["#FFFFCC", "#FFFF99", "#FFFF66", "#FFFF33", "#FFFF00", "#FFCC00", "#FF9900", "#FF6600", "#FF3300", "#FF0000"]); // Black for 0% participation, yellow for others
+
+                chart.colorScale(colorScale);
+
+                chart.tooltip().titleFormat(function () {
+                  return 'Value: ' + this.getData('heat').toFixed(2) + '%' + ' (' + this.getData('filtered') + '/' + this.getData('total') + ' are Explicit' + ')';
+                });
+                chart.tooltip().format(function () {
+                  return 'Country: ' + this.getData('y') + ', Genre: ' + this.getData('x');
+                });
+
+                chart.xAxis().staggerMode(true).staggerLines(2); // Stagger mode to fit more labels
+                chart.xAxis().labels().format(function() {
+
+                  var words = genres[this.index].split(' ');
+                  if (words.length > 1){
+
+                    var abbreviatedLabel = words[0].charAt(0) + '. ';
+                    abbreviatedLabel += words.slice(1).join(' ');
+                    return abbreviatedLabel;
+                  }
+                  else{
+                    return genres[this.index];
+                  }
+                }).fontWeight('bold').fontColor('black');
+
+                chart.yAxis().labels().format(function() {
+                  return country;
+                }).fontWeight('bold').fontColor('black');
+
+                chart.draw();
+            });
+          }
+        });
+    }
+
+// FUNCTION TO REDRAW THE HEATMAP ON CHANGING VALUE OF MONTH OR YEAR
+    function redrawMap(topo, data, year, month) {
+      svg.selectAll("path").remove();
+      drawMap(topo, data, year, month);
+    }
+  }
+</script>

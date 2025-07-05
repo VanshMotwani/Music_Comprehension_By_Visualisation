@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>cluster heatmap</title>
+    <style>
+        .tooltip {
+            position: absolute;
+            top: 4%;
+            left: 58%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            pointer-events: none; /* Ensure the tooltip does not block mouse events */
+            transition: opacity 0.3s ease-in-out;
+            z-index: 999; /* Ensure it's above other elements */
+        }
+
+        .tooltipPerm {
+            position: absolute;
+            font-size: 30px;
+            top: 4%;
+            left: 58%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding-left: 50px;
+            padding-right: 50px;
+            border-radius: 5px;
+            pointer-events: none; /* Ensure the tooltip does not block mouse events */
+            transition: opacity 0.3s ease-in-out;
+            z-index: -1; /* Ensure it's above other elements */
+        }
+
+        #container {
+            height: 900px;
+            width: 100%;
+            padding-top: 2%;
+        }
+
+        svg {
+            position: absolute;
+            top: 5%; /* Adjust this value to move the SVG down */
+            left: 50%; /* Adjust this value to move the SVG right */
+            transform: translateX(-50%);
+        }
+
+        #color-bar {
+            position: absolute;
+            top: 90%;
+            left: 3%;
+            width: 400px;
+            height: 30px;
+            background: linear-gradient(90deg, #000000 0%, #005000 5%, #007F00 10%, #00AA00 15%, #00D200 20%, #00FF00 25%, #66FF00 30%, #80FF00 35%, #99FF00 40%, #B3FF00 45%, #CCFF00 50%, #E5FF00 55%, #FFFF00 60%, #FFFF33 65%, #FFFF66 70%, #FFFF99 75%, #FFFFCC 80%, #FFFFE5 85%, #FFFFF0 90%, #FFFFFA 95%, #FFFFFF 100%);
+            border-radius: 5px;
+        }
+
+        #color-bar-label {
+            position: absolute;
+            top: 85%;
+            left: 3%;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: black;
+            display: flex;
+            justify-content: space-between;
+            width: 300px;
+            transform: translateY(10px);
+        }
+
+        #description-container {
+            position: absolute;
+            top: 85%;
+            left: 13.5%;
+            transform: translateX(-50%);
+            padding: 5px;
+            background-color: black;
+            border: 1px solid black;
+            border-radius: 5px;
+        }
+
+        #description {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            color: white;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="description-container">
+    <p id="description">Percentage of the genre's songs</p>
+</div>
+<div id="color-bar"></div>
+<div id="color-bar-label">0%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100%</div>
+<svg></svg>
+<div class="hoverContent" id="hoverContent">
+    <div id="hover-content">
+        <span id="hover-row"></span>, <span id="hover-col"></span>: <span id="hover-value"></span>
+    </div>
+</div>
+<div>
+    <label for="yearSlider">Year:</label>
+    <input type="range" min="2017" max="2020" value="2017" class="slider" id="yearSlider" disabled>
+    <span id="yearValue"></span>
+</div>
+<div>
+    <label for="monthSlider">Month:</label>
+    <input type="range" min="1" max="12" value="1" class="slider" id="monthSlider" disabled>
+    <span id="monthValue"></span>
+</div>
+<!-- this tooltip houses the permanent tooltip showing currently selected month and year -->
+<div class="tooltipPerm" id="yearMonthTooltip"></div>
+<div id="container"></div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+    var data;
+    var yRootData;
+    var xRootData;
+    var monthList = [
+        'Filler', 'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    var container = document.getElementById('container');
+    var yearSlider = document.getElementById("yearSlider");
+    var monthSlider = document.getElementById("monthSlider");
+    var prevMonthButton = document.getElementById("prevMonth");
+    var nextMonthButton = document.getElementById("nextMonth");
+    var yearOutput = document.getElementById("yearValue");
+    var monthOutput = document.getElementById("monthValue");
+    var tooltipPerm = document.getElementById("yearMonthTooltip");
+
+    // Initial heatmap
+    d3.csv("FinalDatabase_updated.csv").then(function (csvData) {
+        data = csvData; // Store the loaded CSV data in the variable
+        // console.log(data);
+        d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "countries").then(function (yRootDataCountries) {
+            // console.log(yRootDataCountries);
+            yRootData = yRootDataCountries;
+
+            d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "genres").then(function (xRootDataGenres) {
+                // console.log(xRootDataGenres);
+                xRootData = xRootDataGenres;
+
+                updateHeatmap(yearSlider.value, monthSlider.value, data, yRootData, xRootData);
+            });
+        });
+    });
+    updateYearMonth();
+
+    // redraw map on changing month or year value
+    yearSlider.oninput = function () {
+        yearOutput.innerHTML = this.value;
+        // updateHeatmap(this.value, monthSlider.value, data, yRootData, xRootData);
+        // Load yRootData for countries from a JSON file
+        d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "countries").then(function (yRootDataCountries) {
+            // console.log(yRootDataCountries);
+            yRootData = yRootDataCountries;
+
+            // Load yRootData for genres from a JSON file
+            d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "genres").then(function (xRootDataGenres) {
+                // console.log(xRootDataGenres);
+                xRootData = xRootDataGenres;
+
+                updateHeatmap(yearSlider.value, monthSlider.value, data, yRootData, xRootData);
+            });
+        });
+        updateYearMonth();
+    }
+
+    monthSlider.oninput = function () {
+        monthOutput.innerHTML = this.value;
+        // updateHeatmap(yearSlider.value, this.value, data, yRootData, xRootData);
+        d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "countries").then(function (yRootDataCountries) {
+            // console.log(yRootDataCountries);
+            yRootData = yRootDataCountries;
+
+            d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "genres").then(function (xRootDataGenres) {
+                // console.log(xRootDataGenres);
+                xRootData = xRootDataGenres;
+
+                updateHeatmap(yearSlider.value, monthSlider.value, data, yRootData, xRootData);
+            });
+        });
+        updateYearMonth();
+    }
+
+    // Function to update the year and month tooltip
+    function updateYearMonth() {
+        var year = yearSlider.value;
+        var month = monthSlider.value;
+        tooltipPerm.innerHTML = "<strong>" + monthList[parseInt(month)] + "</strong> " + year; // Update tooltip content
+    }
+
+    // function to change the month and year on press of the arrow keys
+    document.addEventListener("keydown", function (event) {
+        var key = event.key;
+        if (key === "ArrowLeft") {
+            if (parseInt(monthSlider.value) > 1) {
+                monthSlider.value = parseInt(monthSlider.value) - 1;
+            } else {
+                if (parseInt(yearSlider.value) > 2017) {
+                    yearSlider.value = parseInt(yearSlider.value) - 1;
+                    monthSlider.value = 12;
+                }
+            }
+            // updateHeatmap(yearSlider.value, monthSlider.value, data, yRootData, xRootData);
+            d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "countries").then(function (yRootDataCountries) {
+                // console.log(yRootDataCountries);
+                yRootData = yRootDataCountries;
+
+                // Load yRootData for genres from a JSON file
+                d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "genres").then(function (xRootDataGenres) {
+                    // console.log(xRootDataGenres);
+                    xRootData = xRootDataGenres;
+
+                    updateHeatmap(yearSlider.value, monthSlider.value, data, yRootData, xRootData);
+                });
+            });
+            updateYearMonth();
+        } else if (key === "ArrowRight") {
+            if (parseInt(monthSlider.value) < parseInt(monthSlider.max)) {
+                monthSlider.value = parseInt(monthSlider.value) + 1;
+            } else {
+                if (parseInt(yearSlider.value) < 2020) {
+                    yearSlider.value = parseInt(yearSlider.value) + 1;
+                    monthSlider.value = 1;
+                }
+            }
+            // updateHeatmap(yearSlider.value, monthSlider.value, data, yRootData, xRootData);
+            d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "countries").then(function (yRootDataCountries) {
+                // console.log(yRootDataCountries);
+                yRootData = yRootDataCountries;
+
+                d3.json("./clusters/" + yearSlider.value + (Number(monthSlider.value) <= 9 ? "-0" : "-") + monthSlider.value + "-" + "genres").then(function (xRootDataGenres) {
+                    // console.log(xRootDataGenres);
+                    xRootData = xRootDataGenres;
+
+                    updateHeatmap(yearSlider.value, monthSlider.value, data, yRootData, xRootData);
+                });
+            });
+            updateYearMonth();
+        }
+    });
+
+    function updateHeatmap(year, month, data, yRootData, xRootData) {
+        // Filter data based on selected year and month
+        var filteredData = data.filter(function (d) {
+            var modifiedMonth = month.length === 1 ? '0' + month : month;
+            return d.Release_date.includes(year + "-" + modifiedMonth);
+        });
+
+        // Get unique countries and genres
+        var countries = [...new Set(filteredData.map(d => d.Country))];
+
+        // the most popular genres in the database (for relevance) (involved in >1000 rows in the database)
+        var genres = [
+            'dance pop',
+            'latin',
+            'pop',
+            'k-pop',
+            'n-a',
+            'german hip hop',
+            'atl hip hop',
+            'francoton',
+            'dutch hip hop',
+            'big room',
+            'hip hop',
+            'canadian hip hop',
+            'emo rap',
+            'french hip hop',
+            'finnish dance pop',
+            'melodic rap',
+            'boy band',
+            'italian hip hop',
+            'alternative metal',
+            'canadian pop',
+            'modern rock',
+            'chicago rap',
+            'deep german hip hop',
+            'colombian pop',
+            'conscious hip hop',
+            'adult standards',
+            'detroit hip hop',
+            'alternative r&b',
+            'electropop',
+            'canadian contemporary r&b',
+            'edm',
+            'art pop',
+            'polish hip hop',
+            'dfw rap',
+            'mandopop',
+            'danish hip hop',
+            'rap'
+        ]
+
+        // Calculate percentage of each genre's songs for each country
+        var tableData = [];
+        countries.forEach(function (country) {
+            var countryData = {};
+            countryData['key'] = country;
+            countryData['values'] = [];
+            genres.forEach(function (genre) {
+                var genreSongs = filteredData.filter(function (d) {
+                    return d.Country === country && d.Genre === genre
+                }).length;
+
+                var totalSongs = filteredData.filter(function (d) {
+                    return d.Country === country;
+                }).length;
+
+                var percentage = totalSongs > 0 ? (genreSongs / totalSongs) * 100 : 0;
+                countryData['values'].push({key: genre, value: percentage, parent: country})
+            });
+            tableData.push(countryData);
+        });
+
+        console.log("tableData:")
+        console.log(tableData)
+
+        var width = 900,
+            height = 900,
+            wrapperWidth = Math.min(width, height) * 0.6,
+            linkHeight = 50,
+            margin = 5,
+            heatmapWidth = wrapperWidth - (linkHeight + margin),
+            mousePosition;
+
+            var svg = d3.select('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .on('mousemove', function (event) {
+                var [x, y] = d3.pointer(event);
+                tooltipGroup.attr('transform', `translate(${x + 10},${y + 20})`);
+                tooltipText.text(selectedCell ? `(${selectedCell.col}, ${selectedCell.row}): value: ${selectedCell.value}` : '');
+            });
+
+
+        var heatmap = svg.select('.heatmap');
+        if (heatmap.empty()) {
+            heatmap = svg.append('g').attr('class', 'heatmap')
+                .attr('transform', 'translate(' + ((width - wrapperWidth) / 2) + ',' + ((height - wrapperWidth) / 2) + ')');
+        } else {
+            heatmap.selectAll('*').remove(); // Clear the heatmap
+        }
+
+        var nCols = tableData[0].values.length;
+        var nRows = tableData.length;
+        var bandX = d3.scaleBand()
+            .domain(d3.range(nCols))
+            .range([0, heatmapWidth]);
+        var bandY = d3.scaleBand()
+            .domain(d3.range(nRows))
+            .range([0, heatmapWidth]);
+
+        const heatColor = d3.scaleLinear()
+          .domain([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100])
+          .range(['#000000', '#005000', '#007F00', '#00AA00',
+                  '#00D200', '#00FF00', '#66FF00', '#80FF00',
+                  '#99FF00', '#B3FF00', '#CCFF00', '#E5FF00',
+                  '#FFFF00', '#FFFF33', '#FFFF66', '#FFFF99',
+                  '#FFFFCC', '#FFFFE5', '#FFFFF0', '#FFFFFA', '#FFFFFF']);
+
+                  // Create a linear gradient for the color scale
+        // const defs = svg.append("defs");
+        //
+        // const linearGradient = defs.append("linearGradient")
+        //   .attr("id", "colorGradient")
+        //   .attr("x1", "0%")
+        //   .attr("y1", "0%")
+        //   .attr("x2", "100%")
+        //   .attr("y2", "0%");
+        //
+        // linearGradient.selectAll("stop")
+        //   .data(heatColor.range())
+        //   .enter().append("stop")
+        //   .attr("offset", (d, i) => i / (heatColor.range().length - 1))
+        //   .attr("stop-color", d => d);
+        //
+        // // Create a color bar to visualize the gradient
+        // const colorBar = svg.append("g")
+        //   .attr("transform", "translate(50, 50)");
+        //
+        // const barWidth = 300;
+        // const barHeight = 20;
+        //
+        // colorBar.append("rect")
+        //   .attr("x", -200)
+        //   .attr("y", -20)
+        //   .attr("width", barWidth)
+        //   .attr("height", barHeight)
+        //   .style("fill", "url(#colorGradient)");
+        //
+        // // Add text labels for the scale
+        // const labels = [0, 20, 40, 60, 80, 100];
+        //
+        // colorBar.selectAll(".label")
+        //   .data(labels)
+        //   .enter().append("text")
+        //   .attr("class", "label")
+        //   .attr("x", (d, i) => (i / (labels.length - 1)) * barWidth)
+        //   .attr("y", barHeight + 10)
+        //   .text(d => d)
+        //   .style("text-anchor", "middle")
+        //   .style("font-size", "12px");
+
+
+        var table = heatmap.append('g').attr('class', 'table')
+            .attr('transform', 'translate(' + (linkHeight + margin) + ',' + (linkHeight + margin) + ')');
+        var rows = table.selectAll('.row')
+            .data(tableData)
+            .enter().append('g')
+            .attr('class', 'row')
+            .attr('transform', function (d, i) {
+                return 'translate(0, ' + bandY(i) + ')';
+            });
+
+        var selectedCell;
+
+        var xRootKeys = [];
+        extractKeysX(xRootData);
+
+        function extractKeysX(node) {
+            if (node.key !== undefined) {
+                xRootKeys.push(node.key);
+            }
+            if (node.children) {
+                node.children.forEach(function(child) {
+                    extractKeysX(child);
+                });
+            }
+        }
+
+        // console.log(xRootKeys);
+
+        var yRootKeys = [];
+        extractKeysY(yRootData);
+
+        function extractKeysY(node) {
+            if (node.key !== undefined) {
+                yRootKeys.push(node.key);
+            }
+            if (node.children) {
+                node.children.forEach(function(child) {
+                    extractKeysY(child);
+                });
+            }
+        }
+
+        // console.log(yRootKeys);
+
+        var hover = d3.select("#hoverContent");
+        var hoverRow = d3.select("#hover-row");
+        var hoverCol = d3.select("#hover-col");
+        var hoverValue = d3.select("#hover-value");
+
+        rows.selectAll('rect')
+          .data(function (d) {
+              d.values.map(function (i) {
+                  return i.parent = d.key
+              });
+              return d.values;
+          })
+          .enter().append('rect')
+          .style('fill', function (d) {
+              console.log("d:", d)
+              console.log("d.value:", d.value)
+              var countryname = yRootKeys[countries.indexOf(d.parent)];
+              var genrename = xRootKeys[genres.indexOf(d.key)];
+              return heatColor(tableData[countries.indexOf(countryname)]['values'][genres.indexOf(genrename)]['value'])
+          })
+          .style('stroke', '#fff')
+          .style('stroke-width', 0.5)
+          .attr('x', function (d, i) {
+              return bandX(i);
+          })
+          .attr('width', bandX.bandwidth())
+          .attr('height', bandY.bandwidth())
+          .on('mouseover', function (d) {
+              // Increase the opacity of the entire row
+              rows.selectAll('rect')
+                  .style('opacity', 0.4) // Decrease the opacity for all cells
+              d3.select(this.parentNode).selectAll('rect').style('opacity', 1);
+              // console.log(d)
+              // Get the row, column, and value
+              var row = yRootKeys[countries.indexOf(this.__data__.parent)];
+              var col = xRootKeys[genres.indexOf(this.__data__.key)];
+              // var value = tableData[countries.indexOf(row)]['values'][genres.indexOf(col)]['value'];
+              var value = tableData[countries.indexOf(row)]['values'][genres.indexOf(col)]['value'];
+              // Update the tooltip content
+              hoverRow.text(row);
+              hoverCol.text(col);
+              hoverValue.text(value.toFixed(2) + '%');
+
+              // Show the tooltip
+              hover.style('opacity', 1)
+                .style('left', (d['clientX'] + 10) + 'px')
+                .style('top', (d['clientY'] + 10) + 'px')
+                .style('position', 'relative')
+                .style('background-color', 'rgba(0, 0, 0, 0.7)')
+                .style('color', 'white')
+                .style('padding', '5px')
+                .style('border-radius', '5px')
+                .style('transition', 'opacity 0.3s ease-in-out')
+                .style('width', 'auto')
+                .style('max-width', '250px');
+
+              // Highlight the cell
+              d3.select(this)
+                  .style('stroke', '#000')
+                  .style('stroke-width', 2);
+          })
+          .on('mouseout', function () {
+              // Restore the opacity of the entire row
+              rows.selectAll('rect')
+                  .style('opacity', 0.7); // Decrease the opacity for all cells
+
+              // Hide the tooltip
+              hover.style('opacity', 0);
+
+              // Remove cell highlight
+              d3.select(this)
+                  .style('stroke-width', 0.5)
+                  .style('stroke', '#fff');
+          });
+
+        // console.log(yRootData);
+
+        var yRoot = d3.hierarchy(yRootData)
+            .sum(function (d) {
+                return d.length;
+            });
+
+        // console.log("yRoot:")
+        // console.log(yRoot)
+
+        setYLinkScaledY(yRoot, yRoot.data.length = 0, linkHeight / yRoot.data.totalLength);
+        function setYLinkScaledY(d, y0, k) {
+            d.yLinkScaledY = (y0 += d.data.length) * k / 2;
+            if (d.children) d.children.forEach(function (d) {
+                setYLinkScaledY(d, y0, k);
+            });
+        }
+
+        var yCluster = d3.cluster()
+            .size([heatmapWidth, linkHeight])
+            .separation(function () {
+                return 1;
+            });
+
+        yCluster(yRoot);
+
+        var yLinks = heatmap.append('g').attr('class', 'ylinks')
+            .attr('transform', 'translate(' + (-100) + ',' + (linkHeight + margin) + ')');
+        yLinks.selectAll('.link')
+            .data(yRoot.descendants().slice(1))
+            .enter().append('path')
+            .attr('class', 'link')
+            .style('fill', 'none')
+            .style('stroke', '#000')
+            .style('stroke-width', 1)
+            .attr("d", function (d) {
+                return "M" + (d.yLinkScaledY - 20) + "," + d.x // Adjust x-coordinate here
+                    + "L" + (d.parent.yLinkScaledY - 20) + "," + d.x // Adjust x-coordinate here
+                    + " " + (d.parent.yLinkScaledY - 20) + "," + d.parent.x; // Adjust x-coordinate here
+            });
+
+        var yNodes = heatmap.append('g').attr('class', 'ynodes')
+            .attr('transform', 'translate(' + (heatmapWidth + margin + 10) + ',' + (linkHeight + margin + 4) + ')');
+        yNodes.selectAll('.y-node')
+            .data(yRoot.descendants())
+            .enter().append('text')
+            .attr('class', function (d) {
+                return 'y-node ' + (d.data.key ? d.data.key : '')
+            })
+            .attr('transform', function (d) {
+                return 'translate(' + d.y + ',' + d.x + ')';
+            })
+            .style("font-family", "Arial")
+            .style("font-size", "13px")
+            .text(function (d) {
+                // console.log(d)
+                return d.children ? '' : d.data.key
+            });
+
+        var xRoot = d3.hierarchy(xRootData)
+            .sum(function (d) {
+                return d.length;
+            });
+
+        setXLinkScaledY(xRoot, xRoot.data.length = 0, linkHeight / xRoot.data.totalLength);
+
+        function setXLinkScaledY(d, y0, k) {
+            d.xLinkScaledY = (y0 += d.data.length) * k / 2;
+            if (d.children) d.children.forEach(function (d) {
+                setXLinkScaledY(d, y0, k);
+            });
+        }
+
+        var xCluster = d3.cluster()
+            .size([heatmapWidth, linkHeight])
+            .separation(function () {
+                return 1;
+            });
+
+        xCluster(xRoot);
+
+        var xLinks = heatmap.append('g').attr('class', 'xlinks')
+            .attr('transform', 'translate(' + (linkHeight + margin) + ',' + 0 + ')');
+        xLinks.selectAll('.link')
+            .data(xRoot.descendants().slice(1))
+            .enter().append('path')
+            .attr('class', 'link')
+            .style('fill', 'none')
+            .style('stroke', 'blue')
+            .style('stroke-width', 1)
+            .attr("d", function (d) {
+                return "M" + d.x + "," + (d.xLinkScaledY - 100) // Adjust the y-coordinate by subtracting 10 (you can change this value)
+                    + "L" + d.x + "," + (d.parent.xLinkScaledY - 100) // Adjust the y-coordinate by subtracting 10 (you can change this value)
+                    + " " + d.parent.x + "," + (d.parent.xLinkScaledY - 100); // Adjust the y-coordinate by subtracting 10 (you can change this value)
+            });
+
+
+        var xNodes = heatmap.append('g').attr('class', 'xnodes')
+          .attr('transform', 'translate(' + (linkHeight + margin - 5) + ',' + (heatmapWidth + margin + 20) + ')')
+          .selectAll('.x-node')
+          .data(xRoot.descendants())
+          .enter().append('text')
+          .attr('class', 'x-node')
+          .style("text-anchor", 'start')
+          .style("font-family", "Arial")
+          .style("font-size", "13px")
+          .attr("transform", function (d) {
+              return "translate(" + d.x + "," + d.y + ") rotate(60)";
+          }) // Rotate the text
+          .text(function (d) {
+              return d.children ? '' : d.data.key
+          });
+
+        var tooltipGroup = svg.append('g').attr('class', 'tooltip');
+        var tooltip = tooltipGroup.append('rect')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 150)
+            .attr('height', 30)
+            .style('opacity', 0)
+            .style('stroke', '#000')
+            .style('stroke-width', 1)
+            .style('fill', 'rgba(255, 255, 255, 0.9');
+        var tooltipText = tooltipGroup.append('text')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('dx', 10)
+            .attr('dy', 20)
+    }
+</script>
+</body>
+</html>
